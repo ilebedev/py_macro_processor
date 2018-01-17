@@ -28,10 +28,10 @@ def main(filename = None, args={}):
 
   # Chop file up into verilog and python tokens.
   # Odd elements are python, of the form (expr?, py_str), where expr? is a boolean denoting that the py_str is an EXPRESSION, and not a block of code.
-  file = re.sub(r"\r?\n", ("%s#" % token), file) # Hide newlines for now
+  file = re.sub(r"\r?\n", ("#%s#" % token), file) # Hide newlines for now
   segments = re.split(r"(%s[\(\{].*?)[\)\}]%s" % (re.escape(token), re.escape(token)), file, flags=re.MULTILINE)
-  v_segments = [re.sub("%s#"%re.escape(token), "\n", s) for s in segments[0::2]]
-  py_segments = [(s[0:1+len(token)]==("%s("%token), re.sub(r"%s#"%re.escape(token), "\n", s[(1+len(token)):])) for s in segments[1::2] ]
+  v_segments = [re.sub("#%s#"%re.escape(token), "\n", s) for s in segments[0::2]]
+  py_segments = [(s[0:1+len(token)]==("%s("%token), re.sub(r"#%s#"%re.escape(token), "\n", s[(1+len(token)):])) for s in segments[1::2] ]
 
   #evaluate/execute py_segements in a presistent scope
   def do_exec(statements):
